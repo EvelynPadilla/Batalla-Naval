@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sala de Guerra</title>
+    <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+
+    <h2 id="saludo-titulo">Cargando puente de mando...</h2>
+
+    <div class="info-partida">
+        <div id="turno-texto">Conectando...</div>
+        <p id="log-servidor" style="color: #bbb; margin: 5px 0 0 0;"></p>
+    </div>
+
+    <div class="tableros-container">
+        <div class="cuadrante">
+            <h4 id="titulo-base" style="margin:5px 0;">Tu Flota</h4>
+            <div id="grilla-propia" class="grilla-naval"></div>
+        </div>
+        <div class="cuadrante">
+            <h4 style="margin:5px 0;">Mar Enemigo (Disparar)</h4>
+            <div id="grilla-rival" class="grilla-naval"></div>
+        </div>
+    </div>
+
+    <script>
+               // Recuperar parámetros guardados en la pantalla del lobby
+            let miEquipoId = sessionStorage.getItem('juego_equipoId');
+            let miNombre = sessionStorage.getItem('juego_nombre');
+
+            // Seguridad: Si intentan entrar directo sin registrarse, los regresa al lobby
+            if (!miEquipoId || !miNombre) {
+                window.location.href = "/lobby.html";
+            }
+
+            // Personalizar colores del título de la vista según el equipo recuperado
+            let txtEquipo = (miEquipoId === '1') ? "Escuadrón Rojo" : "Escuadrón Azul";
+            document.getElementById('saludo-titulo').innerText = `⚓ Almirante: ${miNombre} [${txtEquipo}] ⚓`;
+            document.getElementById('titulo-base').style.color = (miEquipoId === '1') ? "#d9534f" : "#0275d8";
+
+            // Abrir SSE mandando las variables en la QueryString
+            let canalSse = new EventSource(`/events?equipoId=${miEquipoId}&nombre=${encodeURIComponent(miNombre)}`);
+
+            canalSse.onmessage = function(event) {
+                let datos = JSON.parse(event.data);
+
+                // Renderizar estado de turnos
+                if (datos.ganador != null) {
+                    document.getElementById('turno-texto').innerText = (datos.ganador === miEquipoId) ? "¡VICTORIA TOTAL! 🏆" : "DERROTA: Tu flota cayó. 💀";
+                } else {
+                    if (datos.turnoDe === miEquipoId) {
+                        document.getElementById('turno-texto').innerText = "¡TU TURNO DE DISPARAR! 🎯";
+                        document.getElementById('turno-texto').style.color = "#5cb85c";
+                    } else {
+                        document.getElementById('turno-texto').innerText = "Enemigo acechando... Espera.";
+                        document.getElementById('turno-texto').style.color = "#f0ad4e";
+                    }
+                }
+                document.getElementById('log-servidor').innerText = datos.logMsg;
+
+                let activo = (datos.turnoDe === miEquipoId) && (datos.ganador === null);
+
+                // Redibujar mi grilla
+                let gPropia = document.getElementById('grilla-propia');
+                gPropia.innerHTML = '';
+                for(let i=0; i<10; i++){
+                    for(let j=0; j<10; j++){
+                        let c = document.createElement('div'); c.className = 'cuadro';
+                        let v = datos.matrizPropia[i][j];
+                        if (v === '🚢') c.classList.add(miEquipoId === '1' ? 'barco-rojo' : 'barco-azul');
+                        else if (v === '💥') { c.classList.add('casilla-tocado'); c.innerText = '💥'; }
+                        else if (v === '💧') { c.classList.add('casilla-agua'); c.innerText = '💧'; }
+                        gPropia.appendChild(c);
+                    }
+                }
+
+                // Redibujar radar rival
+                let gRival = document.getElementById('grilla-rival');
+                gRival.innerHTML = '';
+                for(let i=0; i<10; i++){
+                    for(let j=0; j<10; j++){
+                        let c = document.createElement('div'); c.className = 'cuadro';
+                        let v = datos.matrizRival[i][j];
+                        if (v === '💥') { c.classList.add('casilla-tocado'); c.innerText = '💥'; }
+                        else if (v === '💧') { c.classList.add('casilla-agua'); c.innerText = '💧'; }
+                        else if (activo) {
+                            c.style.cursor = 'pointer';
+                            c.onclick = function() { enviarFuego(i, j); };
+                        }
+                        gRival.appendChild(c);
+                    }
+                }
+            };
+
+            function enviarFuego(fila, col) {
+                fetch('/atacar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ equipoId: miEquipoId, fila: fila, columna: col })
+                });
+            }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Batalla Naval - Acceso</title>
+    <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+
+    <h2>⚓ REGISTRO DE ALMIRANTES ⚓</h2>
+
+    <div class="caja-contenedor caja-login">
+        <h3>Ingresa tu Nombre de Guerra:</h3>
+        <input type="text" id="input-nombre" placeholder="Ej. Almirante Nimitz" autocomplete="off">
+
+        <h3>Elige tu Escuadrón:</h3>
+        <button class="btn btn-rojo" onclick="entrarGuerra('1')">Unirse al Equipo Rojo</button>
+        <button class="btn btn-azul" onclick="entrarGuerra('2')">Unirse al Equipo Azul</button>
+    </div>
+
+    <script>
+              function entrarGuerra(equipoId) {
+                let nombre = document.getElementById('input-nombre').value.trim();
+
+                if (nombre === "") {
+                    alert("Por favor, introduce tu nombre antes de elegir bando.");
+                    return;
+                }
+
+                // Almacenamos temporalmente en la memoria del navegador de forma nativa
+                sessionStorage.setItem('juego_equipoId', equipoId);
+                sessionStorage.setItem('juego_nombre', nombre);
+
+                // Redireccionamos físicamente a la otra página del servidor
+                window.location.href = "/batalla.html";
+            }
+    </script>
+</body>
+</html>

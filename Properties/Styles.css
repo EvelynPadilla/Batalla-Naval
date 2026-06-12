@@ -1,0 +1,141 @@
+﻿body {
+    background-color: #1a1a24;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2, h3, h4 {
+    margin: 5px 0;
+}
+
+.sub {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+
+.caja-contenedor {
+    background-color: #252532;
+    border: 2px solid #3b3b4f;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 0 auto;
+}
+
+
+.btn {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    color: white;
+    transition: opacity 0.2s;
+}
+
+.btn-rojo {
+    background-color: #d9534f;
+}
+
+.btn-azul {
+    background-color: #0275d8;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+
+.caja-login {
+    width: 400px;
+    margin-top: 50px;
+}
+
+    .caja-login input[type="text"] {
+        width: 85%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        background-color: #1f1f2e;
+        color: white;
+        text-align: center;
+    }
+
+    .caja-login .btn {
+        width: 92%;
+    }
+
+.info-partida {
+    background-color: #252532;
+    padding: 15px;
+    border-radius: 5px;
+    width: 80%;
+    margin: 0 auto 20px auto;
+    border-bottom: 4px solid #444;
+}
+
+#turno-texto {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.tableros-container {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.cuadrante {
+    background-color: #252532;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #3b3b4f;
+}
+
+.grilla-naval {
+    display: grid;
+    grid-template-columns: repeat(10, 38px);
+    grid-template-rows: repeat(10, 38px);
+    gap: 2px;
+    background-color: #444;
+    border: 2px solid #444;
+    margin-top: 10px;
+}
+
+.cuadro {
+    background-color: #1f1f2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    user-select: none;
+}
+
+
+.casilla-agua {
+    background-color: #2a4d69;
+}
+
+.casilla-tocado {
+    background-color: #962d2d;
+}
+
+
+.barco-rojo {
+    border: 2px solid #d9534f;
+    background-color: #3a2222;
+}
+
+.barco-azul {
+    border: 2px solid #0275d8;
+    background-color: #1a2a3a;
+}
